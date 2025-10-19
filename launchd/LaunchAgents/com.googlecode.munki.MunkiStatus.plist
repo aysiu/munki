@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AssociatedBundleIdentifiers</key>
+	<array>
+		<string>com.googlecode.munki.ManagedSoftwareCenter</string>
+	</array>
 	<key>KeepAlive</key>
 	<dict>
 		<key>PathState</key>
@@ -24,7 +28,7 @@
 	</array>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Applications/Managed Software Center.app/Contents/Resources/MunkiStatus.app/Contents/MacOS/MunkiStatus</string>
+		<string>/Applications/Managed Software Center.app/Contents/Helpers/MunkiStatus.app/Contents/MacOS/MunkiStatus</string>
 	</array>
 </dict>
 </plist>

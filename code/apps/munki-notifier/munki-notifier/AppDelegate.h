@@ -3,10 +3,11 @@
 //  munki-notifier
 //
 //  Created by Greg Neagle on 2/23/17.
-//  Copyright © 2018-2024 The Munki Project. All rights reserved.
+//  Copyright © 2018-2025 The Munki Project. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
+#import <UserNotifications/UserNotifications.h>
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSUserNotificationCenterDelegate>
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSUserNotificationCenterDelegate, UNUserNotificationCenterDelegate>
 @end

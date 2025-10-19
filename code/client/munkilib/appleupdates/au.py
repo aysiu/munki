@@ -1,6 +1,6 @@
 # encoding: utf-8
 #
-# Copyright 2009-2024 Greg Neagle.
+# Copyright 2009-2025 Greg Neagle.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -346,7 +346,7 @@ class AppleUpdates(object):
             # record items we aren't planning to attempt to install
             remaining_apple_updates = [item for item in installlist
                                        if item not in filtered_installlist]
-            # set the list of items to install to our newly-filted list
+            # set the list of items to install to our newly-filtered list
             installlist = filtered_installlist
 
         elif os_version_tuple >= (10, 14):

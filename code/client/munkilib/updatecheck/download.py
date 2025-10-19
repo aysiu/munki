@@ -1,6 +1,6 @@
 # encoding: utf-8
 #
-# Copyright 2009-2024 Greg Neagle.
+# Copyright 2009-2025 Greg Neagle.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -456,7 +456,7 @@ def uncache(space_needed_in_kb):
         if deleted_kb >= space_needed_in_kb:
             break
         # remove and return last item in precached_items
-        # we delete the smallest item first, proceeeding until we've freed up
+        # we delete the smallest item first, proceeding until we've freed up
         # enough space or deleted all the items
         item = precached_items.pop()
         item_path = os.path.join(cachedir, item[0])

@@ -3,7 +3,7 @@
 //  Managed Software Center
 //
 //  Created by Greg Neagle on 6/6/18.
-//  Copyright © 2018-2024 The Munki Project. All rights reserved.
+//  Copyright © 2018-2025 The Munki Project. All rights reserved.
 //
 
 import Foundation
@@ -127,7 +127,7 @@ func linkOrCopy(_ sourcePath: String, _ destPath: String) {
     if prefer_symlink {
         do {
             // symlinks sort of invert the idea of source and destination.
-            // in this case, sourcePath is the orignal content in its "real" location
+            // in this case, sourcePath is the original content in its "real" location
             // and destPath is where the symlink itself resides
             try FileManager.default.createSymbolicLink(atPath: destPath, withDestinationPath: sourcePath)
         } catch {

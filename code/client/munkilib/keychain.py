@@ -1,6 +1,6 @@
 # encoding: utf-8
 #
-# Copyright 2014-2024 Greg Neagle.
+# Copyright 2014-2025 Greg Neagle.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ Incorporating work and ideas from Michael Lynn here:
     https://gist.github.com/pudquick/7704254
 and here:
     https://gist.github.com/pudquick/836a19b5ff17c5b7640d#file-cert_tricks-py
-Updated October 2022 for compatibilty with macOS Ventura
+Updated October 2022 for compatibility with macOS Ventura
 """
 from __future__ import absolute_import, print_function
 

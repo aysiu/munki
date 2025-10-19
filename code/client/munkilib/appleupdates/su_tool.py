@@ -1,6 +1,6 @@
 # encoding: utf-8
 #
-# Copyright 2019-2024 Greg Neagle.
+# Copyright 2019-2025 Greg Neagle.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -89,19 +89,19 @@ def parse_su_update_line_old_style(line):
     info = {}
     # strip leading and trailing whitespace
     line = line.strip()
-    title, seperator, line = line.partition("(")
-    if not seperator == "(":
+    title, separator, line = line.partition("(")
+    if not separator == "(":
         # no idea of the format, just return an empty dict
         return {}
     info['Title'] = title.rstrip()
-    version, seperator, line = line.partition(")")
-    if not seperator == ")":
+    version, separator, line = line.partition(")")
+    if not separator == ")":
         # no idea of the format, just return an empty dict
         return {}
     info['Version'] = version
     line = line.lstrip(', ')
-    size, seperator, line = line.partition('K')
-    if seperator == 'K':
+    size, separator, line = line.partition('K')
+    if separator == 'K':
         info['Size'] = '%sK' % size
     # now start from the end
     if line.endswith(" [restart]"):

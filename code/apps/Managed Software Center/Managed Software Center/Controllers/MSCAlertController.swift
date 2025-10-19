@@ -3,7 +3,7 @@
 //  Managed Software Center
 //
 //  Created by Greg Neagle on 7/15/18.
-//  Copyright © 2018-2024 The Munki Project. All rights reserved.
+//  Copyright © 2018-2025 The Munki Project. All rights reserved.
 //
 
 import Cocoa
@@ -107,12 +107,17 @@ class MSCAlertController: NSObject {
             // less than 5 minutes until forced logout -- only button says "Logout"
             alert.addButton(withTitle: logout_btn_title)
             alert.beginSheetModal(for: mainWindow, completionHandler: { (modalResponse) -> Void in
-                msc_log("user", "install_with_logout")
-                self.handlePossibleAuthRestart()
-                do {
-                    try logoutAndUpdate()
-                } catch {
-                    self.installSessionErrorAlert("\(error)")
+                if modalResponse == .alertFirstButtonReturn {
+                    // checking for the only button seems odd, but the modal can end
+                    // because we called mainWindow.endSheet(attachedSheet)
+                    // and we don't want to try to log out in that case
+                    msc_log("user", "install_with_logout")
+                    self.handlePossibleAuthRestart()
+                    do {
+                        try logoutAndUpdate()
+                    } catch {
+                        self.installSessionErrorAlert("\(error)")
+                    }
                 }
             })
         }
@@ -140,7 +145,7 @@ class MSCAlertController: NSObject {
             alert.informativeText = NSLocalizedString(
                 "Your administrator has restricted installation of these updates. Contact your administrator for assistance.",
                 comment: "Apple Software Updates Unable detail")
-            // disable insstall now button
+            // disable install now button
             alert.buttons[0].isEnabled = false
         } else {
             // prompt user to install using System Preferences
@@ -184,7 +189,7 @@ class MSCAlertController: NSObject {
             timers.append(timer2)
             let timer3 = Timer.scheduledTimer(timeInterval: 14.5,
                                               target: self,
-                                              selector: #selector(self.fadeOutBackdropWindows),
+                                              selector: #selector(self.removeBlurredBackground),
                                               userInfo: nil,
                                               repeats: false)
             timers.append(timer3)
@@ -213,6 +218,13 @@ class MSCAlertController: NSObject {
     
     @objc func openSoftwareUpdate() {
         // object method to call openSoftwareUpdatePrefsPane function
+        if let mainWindowController = (NSApp.delegate! as! AppDelegate).mainWindowController,
+           let blurredBackground = mainWindowController.blurredBackground
+        {
+            // lower the level of our blur windows so the Software Update
+            // pane can appear in front
+            blurredBackground.lowerWindowLevels()
+        }
         openSoftwareUpdatePrefsPane()
         self.haveOpenedSysPrefsSUPane = true
     }
@@ -224,11 +236,10 @@ class MSCAlertController: NSObject {
         }
     }
     
-    @objc func fadeOutBackdropWindows() {
-        // fades out the windows that block access to other apps
-        let backdropWindows = (NSApp.delegate! as! AppDelegate).mainWindowController.backdropWindows
-        for window in backdropWindows {
-            window.animator().alphaValue = 0.0
+    @objc func removeBlurredBackground() {
+        // removes the blurred background so other apps can be accessed
+        if (NSApp.delegate! as! AppDelegate).mainWindowController.blurredBackground != nil {
+            (NSApp.delegate! as! AppDelegate).mainWindowController.blurredBackground = nil
         }
     }
 

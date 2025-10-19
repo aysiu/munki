@@ -1,6 +1,6 @@
 # encoding: utf-8
 #
-# Copyright 2017-2024 Greg Neagle.
+# Copyright 2017-2025 Greg Neagle.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -329,14 +329,21 @@ def getiteminfo(itempath):
     directory and gets additional metadata for later comparison.
     """
     infodict = {}
-    if pkgutils.isApplication(itempath):
-        infodict['type'] = 'application'
-        infodict['path'] = itempath
+    if (os.path.exists(os.path.join(itempath, 'Contents', 'Info.plist')) or
+          os.path.exists(os.path.join(itempath, 'Resources', 'Info.plist'))):
+        if pkgutils.isApplication(itempath):
+            infodict['type'] = 'application'
+            infodict['path'] = itempath
+        else:
+            infodict['type'] = 'bundle'
+            infodict['path'] = itempath
         plist = pkgutils.getBundleInfo(itempath)
+        # Extract the same keys as applications
         for key in ['CFBundleName', 'CFBundleIdentifier',
                     'CFBundleShortVersionString', 'CFBundleVersion']:
             if key in plist:
                 infodict[key] = plist[key]
+        # Also extract minimum OS version info like applications
         if 'LSMinimumSystemVersion' in plist:
             infodict['minosversion'] = plist['LSMinimumSystemVersion']
         elif 'LSMinimumSystemVersionByArchitecture' in plist:
@@ -349,15 +356,6 @@ def getiteminfo(itempath):
         elif 'SystemVersionCheck:MinimumSystemVersion' in plist:
             infodict['minosversion'] = \
                 plist['SystemVersionCheck:MinimumSystemVersion']
-
-    elif (os.path.exists(os.path.join(itempath, 'Contents', 'Info.plist')) or
-          os.path.exists(os.path.join(itempath, 'Resources', 'Info.plist'))):
-        infodict['type'] = 'bundle'
-        infodict['path'] = itempath
-        plist = pkgutils.getBundleInfo(itempath)
-        for key in ['CFBundleShortVersionString', 'CFBundleVersion']:
-            if key in plist:
-                infodict[key] = plist[key]
 
     elif itempath.endswith("Info.plist") or itempath.endswith("version.plist"):
         infodict['type'] = 'plist'
@@ -388,7 +386,6 @@ def getiteminfo(itempath):
         if os.path.isfile(itempath):
             infodict['md5checksum'] = munkihash.getmd5hash(itempath)
     return infodict
-
 
 def makepkginfo(installeritem, options):
     '''Return a pkginfo dictionary for item'''
@@ -623,7 +620,7 @@ def makepkginfo(installeritem, options):
             # handle case where value may have been set (e.g. flat package)
             item_minosversions.append(pkgutils.MunkiLooseVersion(
                 pkginfo['minimum_os_version']))
-        # get the maximum from the list and covert back to string
+        # get the maximum from the list and convert back to string
         pkginfo['minimum_os_version'] = str(max(item_minosversions))
 
     if not 'minimum_os_version' in pkginfo:

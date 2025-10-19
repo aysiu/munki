@@ -1,6 +1,6 @@
 # encoding: utf-8
 #
-# Copyright 2009-2024 Greg Neagle.
+# Copyright 2009-2025 Greg Neagle.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ functions = [("IOPMAssertionCreateWithName", b"i@i@o^i"),
              ("IOPSCopyPowerSourcesInfo", b"@"),
              ("IOPSCopyPowerSourcesList", b"@@"),
              ("IOPSGetProvidingPowerSourceType", b"@@"),
+             ("IOPMCopyAssertionsByProcess", b"io^@")
             ]
 
 # No idea why PyLint complains about objc.loadBundleFunctions
@@ -89,6 +90,22 @@ def hasInternalBattery():
             return True
     return False
 
+def getIOPMAssertions():
+    """Returns a dict containing PowerManager assertions keyed by process name"""
+    (result, assertions) = IOPMCopyAssertionsByProcess(None)
+    if result != 0:
+        return None
+    pm_assertions = {}
+    for assertion_list in assertions.values():
+        for assertion in assertion_list:
+            process_name = assertion.get("Process Name")
+            assertionType = assertion.get("AssertionTrueType")
+            if process_name and assertionType:
+                if not process_name in pm_assertions:
+                    pm_assertions[process_name] = []
+                pm_assertions[process_name].append(assertionType)
+    return pm_assertions
+
 def assertNoIdleSleep(reason=None):
     """Uses IOKit functions to prevent idle sleep."""
     kIOPMAssertionTypeNoIdleSleep = "NoIdleSleepAssertion"
@@ -105,7 +122,6 @@ def assertNoIdleSleep(reason=None):
     if errcode:
         return None
     return assertID
-
 
 def removeNoIdleSleepAssertion(assertion_id):
     """Uses IOKit functions to remove a "no idle sleep" assertion."""

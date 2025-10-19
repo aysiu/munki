@@ -1,6 +1,6 @@
 # encoding: utf-8
 #
-# Copyright 2009-2024 Greg Neagle.
+# Copyright 2009-2025 Greg Neagle.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -274,7 +274,7 @@ def process_optional_install(manifestitem, cataloglist, installinfo):
     iteminfo['installer_item_size'] = \
         item_pl.get('installer_item_size', 0)
     iteminfo['installed_size'] = item_pl.get(
-        'installer_item_size', iteminfo['installer_item_size'])
+        'installed_size', iteminfo['installer_item_size'])
     if item_pl.get('note'):
         # catalogs.get_item_detail() passed us a note about this item;
         # pass it along

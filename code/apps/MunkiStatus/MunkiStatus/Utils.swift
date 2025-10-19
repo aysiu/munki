@@ -3,7 +3,7 @@
 //  MunkiStatus
 //
 //  Created by Greg Neagle on 5/19/18.
-//  Copyright © 2018-2024 The Munki Project. All rights reserved.
+//  Copyright © 2018-2025 The Munki Project. All rights reserved.
 //
 
 import Foundation
@@ -37,6 +37,27 @@ func atLoginWindow() -> Bool {
     return (consoleuser! == "loginwindow")
 }
 
+func isBootstrapping() -> Bool {
+    let fm = FileManager.default
+    let path = "/Users/Shared/.com.googlecode.munki.checkandinstallatstartup"
+    if fm.fileExists(atPath: path) {
+        print("Bootstrap run in progress")
+        return true
+    }
+    return false
+}
+
+func isAppleSilicon() -> Bool {
+    var systemInfo = utsname()
+    uname(&systemInfo)
+    let machine = withUnsafePointer(to: &systemInfo.machine) {
+        $0.withMemoryRebound(to: CChar.self, capacity: 1) {
+            String(cString: $0)
+        }
+    }
+    return machine.starts(with: "arm64")
+}
+
 func exec(_ command: String, args: [String]?) -> String {
     // runs a UNIX command and returns stdout as a string
     let proc = Process()
@@ -49,6 +70,7 @@ func exec(_ command: String, args: [String]?) -> String {
     return String(data: data, encoding: String.Encoding.utf8)!
 }
 
+/// Returns true if a Python script matching scriptName is running
 func pythonScriptRunning(_ scriptName: String) -> Bool {
     let output = exec("/bin/ps", args: ["-eo", "command="])
     let lines = output.components(separatedBy: "\n")
@@ -56,12 +78,36 @@ func pythonScriptRunning(_ scriptName: String) -> Bool {
         let part = line.components(separatedBy: " ")
         if (part[0].contains("/MacOS/Python") || part[0].contains("python")) {
             if part.count > 1 {
-                if part[1].contains(scriptName) {
-                    print(line)
+                if (part[1] as NSString).lastPathComponent == scriptName {
                     return true
                 }
             }
         }
+    }
+    return false
+}
+
+/// Returns true if there is a running executable exactly matching the name
+func executableRunning(_ name: String) -> Bool {
+    let result = exec("/usr/bin/pgrep", args: ["-x", name])
+    return !result.isEmpty
+}
+
+/// Returns true if managedsoftwareupdate is running
+func managedsoftwareupdateInstanceRunning() -> Bool {
+    // A Python version of managedsoftwareupdate might be running,
+    // or a compiled version
+    if executableRunning("managedsoftwareupdate") {
+        return true
+    }
+    if pythonScriptRunning(".managedsoftwareupdate.py") {
+        return true
+    }
+    if pythonScriptRunning("managedsoftwareupdate.py") {
+        return true
+    }
+    if pythonScriptRunning("managedsoftwareupdate") {
+        return true
     }
     return false
 }

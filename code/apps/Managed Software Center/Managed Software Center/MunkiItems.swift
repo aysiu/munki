@@ -3,7 +3,7 @@
 //  Managed Software Center
 //
 //  Created by Greg Neagle on 6/7/18.
-//  Copyright © 2018-2024 The Munki Project. All rights reserved.
+//  Copyright © 2018-2025 The Munki Project. All rights reserved.
 //
 
 import AppKit
@@ -853,7 +853,7 @@ class OptionalItem: GenericItem {
                     start_text += "<span class=\"warning\">\(formatted_str)</span><br><br>"
                 }
             }
-            if !((my["dependent_items"] as? [String] ?? []).isEmpty) {
+            if !(dependent_items.isEmpty) {
                 start_text += dependency_description()
             }
         }
@@ -1411,7 +1411,7 @@ func dependentItems(_ item_name: String) -> [String] {
     // optional item
     if !Cache.shared.keys.contains("optional_installs_with_dependencies") {
         let self_service_installs = SelfService().installs
-        if let optional_installs = cachedInstallInfo()["optional_instslls"] as? [PlistDict] {
+        if let optional_installs = cachedInstallInfo()["optional_installs"] as? [PlistDict] {
             Cache.shared["optional_installs_with_dependencies"] = (
                 optional_installs.filter(
                     {
